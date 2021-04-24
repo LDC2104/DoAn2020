@@ -50,15 +50,6 @@ class ThongTin extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
-                                    <a href="#"> Giảng viên hướng dẫn</a>
-                                </div>
-                            <div id="collapse_1" class="accordion-body collapse" >
-                                <div class="accordion-inner">
-                                </div>
-                            </div>
-                                </div>
-                            <div class="accordion-group khungt">
-                                <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                         <a href="#">Tài liệu tham khảo</a>
                                 </div>
                             </div>
