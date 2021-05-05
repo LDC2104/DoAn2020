@@ -118,7 +118,7 @@ router.post('/Them/:id', async (req, res, next) => {
   try {
     if(ngTao !== 'admin'){
       const result = await db.Topic.create({tenDoAn, nenTang, loai, moTa, ngayNop, ngDK, ngTao});
-      const result1 = await db.User_Topic.create({userId: ngTao, topicId: result.id});
+      const result1 = await db.User_Topic.create({userId: ngTao, topicId: result.id, important: 1});
       res.send(result);
     }
     else {
@@ -130,19 +130,17 @@ router.post('/Them/:id', async (req, res, next) => {
   }
 });
 
-//Thêm giáo viên hướng dẫn
-router.post('/:id/ThemGV', async (req, res, next) => {
-  let {id} = req.params;
+//Thêm giảng viên
+router.post('/:id/ThemGV/:ip', async (req, res, next) => {
+  let {id, ip} = req.params;
   let idUser = req.cookies.id;
-  console.log(id);
   try {
-    const result = await db.User_Topic.create({userId: idUser, topicId: id});
+    const result = await db.User_Topic.create({userId: idUser, topicId: id, important: ip});
     res.send(result);
   } catch (error) {
     res.send(error);
   }
  });
-
 
 //Lấy giá trị để sửa
 router.get('/:id/edit', async (req, res, next) => {
@@ -184,6 +182,18 @@ router.put('/diem', async (req, res, next) => {
       const result = await db.Topic.update({lan3:diem},{where: {id}});
       res.send('s');
     }
+    if(lan == 4){
+      const result = await db.Topic.update({lan4:diem},{where: {id}});
+      res.send('s');
+    }
+    if(lan == 5){
+      const result = await db.Topic.update({lan5:diem},{where: {id}});
+      res.send('s');
+    }
+    if(lan == 6){
+      const result = await db.Topic.update({lan6:diem},{where: {id}});
+      res.send('s');
+    }
   } catch (error) {
     console.log(error);
   }
@@ -194,6 +204,17 @@ router.put('/', async (req, res, next) => {
   let {ngayNop, id, phong} = req.body;
   try {
     const result = await db.Topic.update({ngayNop, phong}, {where: {id}});
+     res.send('s');
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//Thêm link
+router.put('/link', async (req, res, next) => {
+  let {id, link} = req.body;
+  try {
+    const result = await db.Topic.update({link}, {where: {id}});
      res.send('s');
   } catch (error) {
     console.log(error);

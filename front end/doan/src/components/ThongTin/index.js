@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Logo from '../../images/logo.jpg';
+import ReactPlayer from 'react-player'
 
 
 class ThongTin extends Component{
@@ -11,6 +12,7 @@ class ThongTin extends Component{
       ds : [],
       isGV : false,
       ten : '',
+      link : '',
     }
   }
   
@@ -26,7 +28,29 @@ class ThongTin extends Component{
         ds: res.data[0].topic,
         isGV : res.data[0].isGV,
         ten : res.data[0].ten,
+        link : res.data[0].topic[0].link,
       })
+    })
+  }
+
+  onChange = (e) => {
+    this.setState({
+      [e.target.name] : e.target.value
+    })
+  }
+
+  upLink = (id, e) => {
+    axios({
+      method : 'put',
+      url : 'http://localhost:4000/topics//link',
+      data : {
+        id : id,
+        link : this.state.link
+      },
+      withCredentials: true
+    }).then(res => {
+      console.log(res.data);
+      alert("Thành công");
     })
   }
   
@@ -45,7 +69,7 @@ class ThongTin extends Component{
                         <div class="accordion ">
                             <div class="accordion-group khungt">
                                 <div class="accordion-heading" style={{padding: '5px'}}>
-                                  <Link to='/'>Trang Chủ</Link>
+                                  <Link to='#'>Trang Chủ</Link>
                                 </div>
                             </div>
                             <div class="accordion-group khungt">
@@ -67,12 +91,12 @@ class ThongTin extends Component{
                         </div>
                     </div>
 
-                    <div class="col-lg-9">
+                    <div class="col-sx-9 col-sm-9 col-md-9 col-lg-9">
                         <div class="divmain">
                             <div class="bgtitle">Thông tin</div>
                             {this.state.ds.map((item, index) => {
-                              return <div className="panel panel-danger" key={index}>
-                                        <div className="panel-body">
+                              return <div className="panel panel-danger"style={{marginTop:'10px'}} key={index}>
+                                        <div className="panel-body" >
                                             <h4>- Tên đồ án: {this.state.ds[index].tenDoAn}</h4>
                                             <h4>- Nền tảng: {this.state.ds[index].nenTang} </h4>
                                             <h4>- Mô tả: {this.state.ds[index].moTa} </h4>
@@ -85,37 +109,103 @@ class ThongTin extends Component{
                                                 }
                                               })}
                                             </h4>
-                                            <h4>- Giáo viên hướng dẫn: 
+                                            <h4>- Giảng viên hướng dẫn: 
                                               {this.state.ds[index].user.map((item) => {
-                                                if(item.isGV === true){
+                                                if(item.isGV === true && item.User_Topic.important === 1){
                                                 return  <p className="ml-10 mt-5" key={item.id}>Tên: {item.ten}, Email: {item.email}</p>
                                                 }
                                               })}
                                             </h4>
-                                            <h4>
-                                            <div className="flex">
-                                      <div style={{marginLeft: "2%"}}>
-                                        Điểm lần 1: {this.state.ds[index].lan1 === null ?
-                                        'Chưa cập nhật'
-                                        : this.state.ds[index].lan1}
-                                      </div>
-                                      <div className="ml-10">
-                                        Điểm lần 2: {this.state.ds[index].lan2 === null ?
-                                        'Chưa cập nhật'
-                                        : this.state.ds[index].lan2}
-                                      </div>
-                                      <div className="ml-10">
-                                        Điểm lần 3: {this.state.ds[index].lan3 === null ?
-                                        'Chưa cập nhật'
-                                        : this.state.ds[index].lan3}
-                                      </div>     
-                                      <div className="ml-10">
-                                        Điểm tổng kết: {(this.state.ds[index].lan1 === null || this.state.ds[index].lan2 === null || this.state.ds[index].lan3 === null) ?
-                                        'Chưa cập nhật'
-                                        : Math.round((this.state.ds[index].lan1 * 0.2 + this.state.ds[index].lan2 * 0.2 + this.state.ds[index].lan3 * 0.6) * 100) / 100}
-                                      </div> 
-                                    </div>
+                                            <h4>- Giảng viên phản biện: 
+                                              {this.state.ds[index].user.map((item) => {
+                                                if(item.isGV === true && item.User_Topic.important === 0){
+                                                return  <p className="ml-10 mt-5" key={item.id}>Tên: {item.ten}, Email: {item.email}</p>
+                                                }
+                                              })}
                                             </h4>
+
+                                          <table class="table table-striped">
+                                            <thead>
+                                              <tr>
+                                                <th>Giảng viên</th>
+                                                <th>Lần 1</th>
+                                                <th>Lần 2</th>
+                                                <th>Lần 3</th>
+                                                <th>Điểm tổng</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {
+                                                this.state.ds[index].user.map((item, index) => {
+                                                  if (item.isGV === true && item.User_Topic.important === 1) {
+                                                    return <tr>
+                                                            <td>{item.ten}</td>
+                                                            <td>
+                                                              {this.state.ds[index].lan1 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[index].lan1}
+                                                            </td>
+                                                            <td>
+                                                              {this.state.ds[index].lan2 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[index].lan2}
+                                                            </td>
+                                                            <td>
+                                                              {this.state.ds[index].lan3 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[index].lan3}
+                                                            </td>
+                                                            <td>...</td>
+                                                          </tr>
+                                                  }
+                                                })
+                                              }
+                                              {
+                                                this.state.ds[0].user.map((item) => {
+                                                  if (item.isGV === true && item.User_Topic.important === 0) {
+                                                    return <tr>
+                                                            <td>{item.ten}</td>
+                                                            <td>
+                                                              {this.state.ds[0].lan4 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[0].lan4}
+                                                            </td>
+                                                            <td>
+                                                              {this.state.ds[0].lan5 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[0].lan5}
+                                                            </td>
+                                                            <td>
+                                                              {this.state.ds[0].lan6 === null ?
+                                                              'Chưa cập nhật'
+                                                              : this.state.ds[0].lan6}
+                                                            </td>
+                                                            <td>...</td>
+                                                          </tr>
+                                                  }
+                                                })
+                                              }
+                                            </tbody>
+                                          </table>
+
+                                          <h4>
+                                            -Link video
+                                            <div>
+                                              <input style={{marginLeft: '15px', width: '400px'}} name="link" type="text" value={this.state.link} onChange={this.onChange} />
+                                              <button className="ml-10 btn-info " onClick={() => this.upLink(this.state.ds[index].id)}>UpLink</button>
+                                            </div>
+                                            {
+                                              this.state.link !== ''
+                                              ? <ReactPlayer
+                                                    style={{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '300px', height: '200px', marginTop: '20px'}}
+                                                    url={this.state.link}
+                                                    controls
+                                                />
+                                              : ''
+                                            }
+                                            
+                                          </h4>
+
                                         </div>
                               </div>    
                         })

@@ -52,6 +52,34 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.FLOAT,
           allowNull: true
         },
+        lan4: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        lan5: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        lan6: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        lan7: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        lan8: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        lan9: {
+          type: DataTypes.FLOAT,
+          allowNull: true
+        },
+        link: {
+          type: DataTypes.STRING,
+          allowNull: true
+        },
       },
       {
         charset: 'utf8',

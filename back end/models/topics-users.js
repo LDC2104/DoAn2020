@@ -9,7 +9,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
             // allowNull defaults to true
-          },
+        },
+        important: {
+          type: DataTypes.INTEGER,
+          allowNull: true
+          // allowNull defaults to true
+      },
 
       }, {
         tableName: 'users_topics',

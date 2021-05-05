@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie';
 import Order from '../Order';
 import Logo from '../../images/logo.jpg';
 import New from '../../images/new.png';
+import ThemAdmin from '../ThemAdmin';
 
 
 
@@ -22,6 +23,7 @@ class QLND extends Component{
             dsF : [],
             hienThi : false,
             infor : [],
+            them : false,
           }
     }
 
@@ -89,7 +91,7 @@ class QLND extends Component{
     }
 
 
-  render() {
+  render() {console.log(this.state.them);
     if (this.state.sE !== '') {
         this.state.dsF = this.state.ds.filter((item) => {
             return item.email.toLowerCase().indexOf(this.state.sE) !== -1
@@ -103,6 +105,10 @@ class QLND extends Component{
                 <img id="imgLogo" style={{maxHeight: '130px', width: '100%'}}  src={Logo} />
             </div>
 
+            {
+                this.state.them ? <ThemAdmin />
+                : ''
+            }
 
             {this.state.hienThi 
                 ? 
@@ -125,8 +131,8 @@ class QLND extends Component{
                                 this.state.infor.topic.length === 0 
                                 ? <p>Chưa có thông tin đồ án</p>
                                 :   this.state.infor.isGV === false
-                                    ? <p class="modal-title">Đồ án đăng ký: {this.state.infor.topic[0].tenDoAn} ({this.state.infor.topic[0].loai}) </p>
-                                    : <p class="modal-title">Đồ án hướng dẫn: {this.state.infor.topic.map((item) => {return <p>- {item.tenDoAn} ({item.loai})</p>})}</p>
+                                    ? <p class="modal-title">Đồ án đăng ký: {this.state.infor.topic[0].tenDoAn}</p>
+                                    : <p class="modal-title">Đồ án hướng dẫn: {this.state.infor.topic.map((item) => {return <p>- {item.tenDoAn}</p>})}</p>
                             }
                         </div>
                     </div>
@@ -172,7 +178,7 @@ class QLND extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
-                                        <a href="#"> Giảng viên hướng dẫn</a>
+                                <Link to={'/GVHD'}>Giảng viên hướng dẫn</Link>
                                 </div>
                             <div id="collapse_1" class="accordion-body collapse" >
                                 <div class="accordion-inner">
@@ -207,7 +213,11 @@ class QLND extends Component{
                                 <thead>
                                     <tr>
                                         <th style={{borderLeft: "2px solid white"}}></th>
-                                        <th style={{borderLeft: "2px solid white"}}></th>                                      
+                                        <th>
+                                            <button onClick={() => {this.setState({them : true})}}>
+                                                Thêm người dùng
+                                            </button>
+                                        </th>                                      
                                         <th>
                                             <div style={{display: "flex"}}>
                                                 <input type="search" name="sE" id="input" class="form-control" value={this.state.sE} required="required" title="Tìm theo email" placeholder="Tìm theo email" onChange={this.onChange} />   

@@ -4,11 +4,11 @@ const db = require('../models');
 
 //Mời
 router.post('/', async (req, res, next) => {
-    let {idMoi, idNhan, idTopic} = req.body;
+    let {idMoi, idNhan, idTopic, ip} = req.body;
     if(idMoi === 'admin')
       idMoi = null;
     try {
-      const result = await db.Order.create({idMoi, idNhan, idTopic});
+      const result = await db.Order.create({idMoi, idNhan, idTopic, ip});
       if(result !== null){
         res.send(result);
       }

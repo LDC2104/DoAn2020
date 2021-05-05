@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
           allowNull: true
         },
+        ip: {
+          type: DataTypes.INTEGER,
+          allowNull: true
+        },
 
       }, {
         tableName: 'orders',

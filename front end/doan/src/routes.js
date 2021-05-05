@@ -15,7 +15,7 @@ import TaoThongBao from './components/TaoThongBao';
 import QLND from './components/QLND';
 import CapNhat from './components/CapNhat';
 import GVHD from './components/GVHD';
-
+import ThemAdmin from './components/ThemAdmin';
 
 
 const routes = [
@@ -47,7 +47,8 @@ const routes = [
     {
         path : '/QLND',
         exact : false,
-        main : ({history}) => <QLND history={history}/>
+        main : ({history}) => <QLND history={history}/>,
+        Comment : ThemAdmin
     },
     {
         path : '/GVHD',
@@ -80,7 +81,7 @@ const routes = [
         main : ({match, history}) => <Them match={match} history={history}/>
     },
     {
-        path : '/:idd/:id/tgv',
+        path : '/:idd/:id/tgv/:ip',
         exact : false,
         main : ({match, history}) => <DanhSachGiaoVien match={match} history={history}/>
     },

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import DanhSachDoAnAdmin from '../DanhSachDoAnAdmin';
 import Cookies from 'universal-cookie';
 import Logo from '../../images/logo.jpg';
+import ReactPlayer from 'react-player';
 
 
 class QuanLyDoAn extends Component{
@@ -13,7 +14,7 @@ class QuanLyDoAn extends Component{
           danhsach : [],
           ten : '',
           s : false,
-          infor : '',
+          info : '',
           ngTao : '',
           n : false,
           p : false,
@@ -24,6 +25,9 @@ class QuanLyDoAn extends Component{
           lan1 : '',
           lan2 : '',
           lan3 : '',
+          lan4 : '',
+          lan5 : '',
+          lan6 : '',
           idUser : '',
           tenDA : '',
           idLoai : '',
@@ -185,10 +189,9 @@ class QuanLyDoAn extends Component{
           }
       }).then(res => {
         this.setState({
-          infor : res.data,
+          info : res.data,
           s : true,
         })
-        console.log(this.state.infor);
       })
       }
 
@@ -265,23 +268,20 @@ class QuanLyDoAn extends Component{
         })
       }
 
-      onClickDi = () => {
-        this.setState({
-          di : !this.state.di,
-        })
-      }
-
       onClickDS = (id, lan) => {
         let diem;
-        this.setState({
-          di : !this.state.di
-        })
         if(lan === 1)
             diem = this.state.lan1;
         if(lan === 2)
             diem = this.state.lan2;
         if(lan === 3)
             diem = this.state.lan3;
+        if(lan === 4)
+            diem = this.state.lan4;
+        if(lan === 5)
+            diem = this.state.lan5;
+        if(lan === 6)
+            diem = this.state.lan6;
         axios({
           method : 'PUT',
           url : 'http://localhost:4000/topics/diem',
@@ -360,118 +360,169 @@ class QuanLyDoAn extends Component{
                             <div className=" col-lg-13 ">
         {
           this.state.s ? 
-            <div className="panel panel-primary">
+            <div className="panel panel-primary" style={{marginTop: '10px'}}>
                 <div className="panel-heading flex">
                     <h3 className="panel-title" style={{width: '200px'}}>Thông tin chi tiết</h3>
                     <button type="button" class="btn btn-lg btn-danger fx xx wcn" onClick={this.onClickD}>X</button>
                 </div>
-                <div className="panel-body">
-                    <h4>Tên đồ án: {this.state.infor.tenDoAn}</h4>
-                    <h4>Nền tảng: {this.state.infor.nenTang} </h4>
-                    <h4>Loại đồ án: {this.state.infor.loai} </h4>
-                    <h4>Mô tả: {this.state.infor.moTa} </h4>
-                    <h4>Ngày báo cáo: {this.state.infor.ngayNop === 'Invalid date' ? 'Chưa cập nhật' : this.state.infor.ngayNop} 
+                <div className="panel-body" style={{marginLeft: '10px'}}>
+                    <h4>Tên đồ án: {this.state.info.tenDoAn}</h4>
+                    <h4>Nền tảng: {this.state.info.nenTang} </h4>
+                    <h4>Loại đồ án: {this.state.info.loai} </h4>
+                    <h4>Mô tả: {this.state.info.moTa} </h4>
+                    <h4>Ngày báo cáo: {this.state.info.ngayNop === 'Invalid date' ? 'Chưa cập nhật' : this.state.info.ngayNop} 
                       <button type="button" className="btn btn-warning f fz" onClick={this.onClickChangeN}>CN</button>
                       {this.state.ng ? 
                         <div>
                           <input type="date" name="ngayNop" id="input" className="form-control" onChange={this.onChange} value={this.state.ngayNop} required="required" title="" />
-                          <button type="button" className="btn btn-danger" onClick={() => this.onClickS(this.state.infor.id)}>save</button>
+                          <button type="button" className="btn btn-danger" onClick={() => this.onClickS(this.state.info.id)}>save</button>
                         </div>
                         :
                         ''
                       }
                     </h4>
-                    <h4>Phòng: {this.state.infor.phong === null ? 'Chưa cập nhật' : this.state.infor.phong} 
+                    <h4>Phòng: {this.state.info.phong === null ? 'Chưa cập nhật' : this.state.info.phong} 
                       <button type="button" className="btn btn-warning f fz" onClick={this.onClickChangeP}>CN</button>
                       {this.state.cp ? 
                         <div>
                           <input type="text" name="phong" id="input" className="form-control" onChange={this.onChange} value={this.state.phong} required="required" title="" />
-                          <button type="button" className="btn btn-danger" onClick={() => this.onClickP(this.state.infor.id)}>save</button>
+                          <button type="button" className="btn btn-danger" onClick={() => this.onClickP(this.state.info.id)}>save</button>
                         </div>
                         :
                         ''
                       }
                     </h4>
                     <h4>Thành viên: 
-                      {this.state.infor.user.map((item) => {
+                      {this.state.info.user.map((item) => {
                         if(item.isGV === false){
                         return  <p className="ml-10 mt-5" key={item.id}>Tên: {item.ten}, Email: {item.email}</p>
                         }
                       })}
                     </h4>
-                    <h4>Giáo viên hướng dẫn:
-                      <Link to={`/${this.state.idLoai}/${this.state.infor.id}/tgv`}type="button" className="btn btn-primary f fz" >+</Link> 
-                      {this.state.infor.user.map((item, index) => {
-                        if(item.isGV === true){
+                    <h4>Giảng viên hướng dẫn:
+                      <Link to={`/${this.state.idLoai}/${this.state.info.id}/tgv/1`}type="button" className="btn btn-primary f fz" >Mời</Link> 
+                      {this.state.info.user.map((item, index) => {
+                        if(item.isGV === true && item.User_Topic.important === 1){
                         return  <p className="ml-10 mt-5" key={item.id}>Tên: {item.ten}, Email: {item.email}
-                                    <button type="button" className="btn btn-warning ml-10 f" onClick={() => this.onDeleteGV(this.state.infor.user[index].id, this.state.infor.id, this.state.infor.ngTao)}>-</button>
+                                    <button type="button" className="btn btn-warning ml-10 f" onClick={() => this.onDeleteGV(this.state.info.user[index].id, this.state.info.id, this.state.info.ngTao)}>-</button>
                                 </p>
                         }
                       })}
                     </h4>
+                    <h4>Giảng viên phản biện:
+                      <Link to={`/${this.state.idLoai}/${this.state.info.id}/tgv/0`}type="button" className="btn btn-primary f fz" >Mời</Link> 
+                      {this.state.info.user.map((item, index) => {
+                        if(item.isGV === true && item.User_Topic.important === 0){
+                        return  <p className="ml-10 mt-5" key={item.id}>Tên: {item.ten}, Email: {item.email}
+                                    <button type="button" className="btn btn-warning ml-10 f" onClick={() => this.onDeleteGV(this.state.info.user[index].id, this.state.info.id, this.state.info.ngTao)}>-</button>
+                                </p>
+                        }
+                      })}
+                    </h4>
+                    {/* <div className="ml-10">
+                          Điểm tổng kết: {(this.state.info.lan1 === null || this.state.info.lan2 === null || this.state.info.lan3 === null) ?
+                          'Chưa cập nhật'
+                          : Math.round((this.state.info.lan1 * 0.2 + this.state.info.lan2 * 0.2 + this.state.info.lan3 * 0.6) * 100) / 100}
+                        </div> */}
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Giảng viên</th>
+                          <th>Lần 1</th>
+                          <th>Lần 2</th>
+                          <th>Lần 3</th>
+                          <th>Điểm tổng</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          this.state.info.user.map((item, index) => {
+                            if (item.isGV === true && item.User_Topic.important === 1) {
+                              return <tr>
+                                      <td>{item.ten}</td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan1" id="input" className="form-control" onChange={this.onChange} value={this.state.lan1} placeholder={this.state.info.lan1 === null ? '' : this.state.info.lan1} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 1)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan2" id="input" className="form-control" onChange={this.onChange} value={this.state.lan2} placeholder={this.state.info.lan2 === null ? '' : this.state.info.lan2} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 2)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan3" id="input" className="form-control" onChange={this.onChange} value={this.state.lan3} placeholder={this.state.info.lan3 === null ? '' : this.state.info.lan3} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 3)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>...</td>
+                                    </tr>
+                            }
+                          })
+                        }
+                        {
+                          this.state.info.user.map((item, index) => {
+                            if (item.isGV === true && item.User_Topic.important === 0) {
+                              return <tr>
+                                      <td>{item.ten}</td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan4" id="input" className="form-control" onChange={this.onChange} value={this.state.lan4} placeholder={this.state.info.lan4 === null ? '' : this.state.info.lan4} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 4)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan5" id="input" className="form-control" onChange={this.onChange} value={this.state.lan5} placeholder={this.state.info.lan5 === null ? '' : this.state.info.lan5} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 5)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>
+                                        {
+                                          <div style={{display: 'flex', justifyContent: 'center'}}>
+                                            <input type="text" style={{width: '50px'}} name="lan6" id="input" className="form-control" onChange={this.onChange} value={this.state.lan6} placeholder={this.state.info.lan6 === null ? '' : this.state.info.lan6} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 6)}>save</button>
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>...</td>
+                                    </tr>
+                            }
+                          })
+                        }
+                      </tbody>
+                    </table>
                     <h4>
-                      <div className="flex">
-                        <div>
-                          Điểm lần 1: {this.state.infor.lan1 === null ?
-                          'Chưa cập nhật'
-                          : this.state.infor.lan1}
-                          <div className="fr ml-5">
-                            <button type="button" className="btn btn-warning ml-10 f" onClick={this.onClickDi}>CN</button>
-                                {this.state.di ? 
-                                  <div>
-                                    <input type="text" name="lan1" id="input" className="form-control" onChange={this.onChange} value={this.state.lan1} required="required" title="" />
-                                    <button type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.infor.id, 1)}>save</button>
-                                  </div>
-                                  :
-                                  ''
-                                }
-                          </div>
-                        </div>
-                        <div className="ml-10">
-                          Điểm lần 2: {this.state.infor.lan2 === null ?
-                          'Chưa cập nhật'
-                          : this.state.infor.lan2}
-                          <div className="fr ml-5">
-                            <button type="button" className="btn btn-warning ml-10 f" onClick={this.onClickDi}>CN</button>
-                                {this.state.di ? 
-                                  <div>
-                                    <input type="text" name="lan2" id="input" className="form-control" onChange={this.onChange} value={this.state.lan2} required="required" title="" />
-                                    <button type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.infor.id, 2)}>save</button>
-                                  </div>
-                                  :
-                                  ''
-                                }
-                          </div>
-                        </div>
-                        <div className="ml-10">
-                          Điểm lần 3: {this.state.infor.lan3 === null ?
-                          'Chưa cập nhật'
-                          : this.state.infor.lan3}
-                          <div className="fr ml-5">
-                            <button type="button" className="btn btn-warning ml-10 f" onClick={this.onClickDi}>CN</button>
-                                {this.state.di ? 
-                                  <div>
-                                    <input type="text" name="lan3" id="input" className="form-control" onChange={this.onChange} value={this.state.lan3} required="required" title="" />
-                                    <button type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.infor.id, 3)}>save</button>
-                                  </div>
-                                  :
-                                  ''
-                                }
-                          </div>
-                        </div>  
-                        <div className="ml-10">
-                          Điểm tổng kết: {(this.state.infor.lan1 === null || this.state.infor.lan2 === null || this.state.infor.lan3 === null) ?
-                          'Chưa cập nhật'
-                          : Math.round((this.state.infor.lan1 * 0.2 + this.state.infor.lan2 * 0.2 + this.state.infor.lan3 * 0.6) * 100) / 100}
-                        </div>   
-                      </div>               
+                      -Link video
+                      {
+                        this.state.link !== ''
+                        ? <ReactPlayer
+                              style={{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '300px', height: '200px', marginTop: '20px'}}
+                              url={this.state.info.link}
+                              controls
+                          />
+                        : ''
+                      }
                     </h4>
                 </div>
               </div>
           : ''   
         }
-        <div className="panel panel-danger ds1">
-              <div className="panel-body">
+        <div className="panel panel-danger ds1" style={{marginTop:'10px'}}>
+              <div className="panel-body" style={{margin:'10px'}}>
                   {/* {this.id ? <Link to={'/ThongTin'} type="button" className="btn btn-default cy bd ml-5">Quay lại</Link> : ''} */}
                     <table className="table table-hover">
                         <thead>
@@ -490,9 +541,9 @@ class QuanLyDoAn extends Component{
                                   this.id ? '' :
                                   <th style={{width: '10px'}}>Phòng</th>
                                 }
-                                <th style={{width: '300px'}}>Giáo viên hướng dẫn</th>
-                                <th style={{display: "flex", justifyContent: "center"}}>
-                                  <Link to={`/Them/${this.state.idLoai}`} type="button" className="btn btn-default cy bd">Thêm đồ án</Link>
+                                <th style={{width: '250px'}}>Giảng viên hướng dẫn</th>
+                                <th >
+                                  <Link style={{display: "flex", justifyContent: "center"}} to={`/Them/${this.state.idLoai}`} type="button" className="btn btn-default btnAdd">Thêm đồ án</Link>
                                 </th>
                             </tr>
                         </thead>

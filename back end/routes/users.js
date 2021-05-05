@@ -45,6 +45,23 @@ router.post('/dk', async (req, res, next) => {
   }
 });
 
+//Đăng ký admin
+router.post('/dkAdmin', async (req, res, next) => {
+  let {email, ten, isGV} = req.body;
+  try {
+    const kt = await db.User.findOne({where : {email : email}});
+      if(kt !== null) {
+        res.send('da ton tai');
+      }
+      else {
+        const result = await db.User.create({email, password : '123', ten, isGV, isAdmin: 0});
+        res.send(result);
+      }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 
 //Đăng nhập
 router.post('/', async (req, res, next) => {

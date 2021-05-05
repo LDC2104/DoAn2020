@@ -142,7 +142,7 @@ class GVHD extends Component{
                         <div class="accordion ">
                         <div class="accordion-group khungt">
                                 <div class="accordion-heading menuhome" style={{padding: '5px'}}>
-                                    <Link to='/'>Trang chủ</Link>
+                                    <Link to='/LuaChon'>Trang chủ</Link>
                                 </div>
                             </div>
                             <div class="accordion-group khungt">
@@ -157,7 +157,13 @@ class GVHD extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
-                                    <Link to='/DangNhap'>Đăng nhập</Link>
+                                    <p className="xc">Xin chào {this.state.ten}</p> 
+                                    {/* {this.state.isGV ? 'giáo viên' : 'sinh viên'} */}
+                                </div>
+                            </div>
+                            <div class="accordion-group khungt">
+                                <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
+                                    <Link to='/'>Đăng xuất</Link>
                                 </div>
                             </div>
                         </div>
