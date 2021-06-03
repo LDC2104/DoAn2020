@@ -10,13 +10,23 @@ class ThongTin extends Component{
     super(props);
     this.state = {
       ds : [],
+      dss : [],
       isGV : false,
       ten : '',
       link : '',
-    }
+      gvhd : [],
+      gvpb : [],
+      tongHD : 0,
+      tongPB : 0,
+      sl : 0,
+      tile : '',
+    }    
   }
   
   componentDidMount(){
+    var s = 0;
+    var hd = 0;
+    var pb = 0;
     axios({
         method : 'GET',
         url : 'http://localhost:4000/users/TT',
@@ -25,12 +35,47 @@ class ThongTin extends Component{
     }).then(res => {
       console.log(res.data);
       this.setState({
-        ds: res.data[0].topic,
-        isGV : res.data[0].isGV,
-        ten : res.data[0].ten,
-        link : res.data[0].topic[0].link,
+        ds: res.data.result[0].topic,
+        dss : res.data.result[0].topic[0].user,
+        isGV : res.data.result[0].isGV,
+        ten : res.data.result[0].ten,
+        link : res.data.result[0].topic[0].link,
       })
+      axios({
+        method : 'POST',
+        url : 'http://localhost:4000/ratios/tile/diem',
+        data : {
+            chuyenNganh : this.state.ten === 'adminPM' ? 'PM' : 'M',
+        },
+        withCredentials: true
+      }).then(res => {
+          this.setState({
+              tile : res.data
+          })
+
+          this.state.ds[0].user.map((item) => {
+
+            if (item.isGV === true && item.User_Topic.important === 1 && item.User_Topic.lan1 !== null && item.User_Topic.lan2 !== null && item.User_Topic.lan3 !== null && this.state.tile !== '') {
+              hd += (item.User_Topic.lan1 * this.state.tile.gvhd1 / 100 + item.User_Topic.lan2 * this.state.tile.gvhd2 / 100 + item.User_Topic.lan3 * this.state.tile.gvhd3 / 100)
+            }
+
+            if (item.isGV === true && item.User_Topic.important === 0 && item.User_Topic.lan1 !== null && item.User_Topic.lan2 !== null && item.User_Topic.lan3 !== null && this.state.tile !== '') {
+              s += 1;
+              pb += (item.User_Topic.lan1 * this.state.tile.gvpb1 / 100 + item.User_Topic.lan2 * this.state.tile.gvpb2 / 100 + item.User_Topic.lan3 * this.state.tile.gvpb3 / 100)
+              
+            }
+    
+          })
+          this.setState({
+            sl : s,
+            tongHD : hd,
+            tongPB : pb
+          })
+
+      })
+
     })
+    
   }
 
   onChange = (e) => {
@@ -99,6 +144,8 @@ class ThongTin extends Component{
                                         <div className="panel-body" >
                                             <h4>- Tên đồ án: {this.state.ds[index].tenDoAn}</h4>
                                             <h4>- Nền tảng: {this.state.ds[index].nenTang} </h4>
+                                            <h4>- Loại: {this.state.ds[index].loai} </h4>
+                                            <h4>- Chuyên ngành: {this.state.ds[index].chuyenNganh} </h4>
                                             <h4>- Mô tả: {this.state.ds[index].moTa} </h4>
                                             <h4>- Ngày báo cáo: {this.state.ds[index].ngayNop === 'Invalid date' ? 'Chưa cập nhật' : this.state.ds[index].ngayNop} </h4>
                                             <h4>- Phòng: {this.state.ds[index].phong === null ? 'Chưa cập nhật' : this.state.ds[index].phong} </h4>
@@ -124,10 +171,10 @@ class ThongTin extends Component{
                                               })}
                                             </h4>
 
-                                          <table class="table table-striped">
+                                          <table class="table table-striped" id="myTable">
                                             <thead>
                                               <tr>
-                                                <th>Giảng viên</th>
+                                                <th id="cc">Giảng viên</th>
                                                 <th>Lần 1</th>
                                                 <th>Lần 2</th>
                                                 <th>Lần 3</th>
@@ -137,57 +184,62 @@ class ThongTin extends Component{
                                             <tbody>
                                               {
                                                 this.state.ds[index].user.map((item, index) => {
-                                                  if (item.isGV === true && item.User_Topic.important === 1) {
-                                                    return <tr>
+                                                  if (item.isGV === true) {
+                                                    return <tr style={{textAlign: 'center'}}>
                                                             <td>{item.ten}</td>
                                                             <td>
-                                                              {this.state.ds[index].lan1 === null ?
+                                                              {item.User_Topic.lan1 === null ?
                                                               'Chưa cập nhật'
-                                                              : this.state.ds[index].lan1}
+                                                              : item.User_Topic.lan1}
                                                             </td>
                                                             <td>
-                                                              {this.state.ds[index].lan2 === null ?
+                                                              {item.User_Topic.lan2 === null ?
                                                               'Chưa cập nhật'
-                                                              : this.state.ds[index].lan2}
+                                                              : item.User_Topic.lan2}
                                                             </td>
                                                             <td>
-                                                              {this.state.ds[index].lan3 === null ?
+                                                              {item.User_Topic.lan3 === null ?
                                                               'Chưa cập nhật'
-                                                              : this.state.ds[index].lan3}
+                                                              : item.User_Topic.lan3}
                                                             </td>
-                                                            <td>...</td>
+                                                            { 
+                                                              item.User_Topic.important === 1 ? 
+                                                                <td id="gvhd">
+                                                                  {
+                                                                    (item.User_Topic.lan1 !== null && item.User_Topic.lan2 !== null && item.User_Topic.lan3 !== null && this.state.tile !== '') 
+                                                                    ? (item.User_Topic.lan1 * this.state.tile.gvhd1 / 100 + item.User_Topic.lan2 * this.state.tile.gvhd2 / 100 + item.User_Topic.lan3 * this.state.tile.gvhd3 / 100).toFixed(1)
+                                                                    : '...'
+                                                                  }
+                                                                </td>
+                                                                :
+                                                                <td id="gvpb">
+                                                                  {
+                                                                    (item.User_Topic.lan1 !== null && item.User_Topic.lan2 !== null && item.User_Topic.lan3 !== null && this.state.tile !== '') 
+                                                                    ? (item.User_Topic.lan1 * this.state.tile.gvpb1 / 100 + item.User_Topic.lan2 * this.state.tile.gvpb2 / 100 + item.User_Topic.lan3 * this.state.tile.gvpb3 / 100).toFixed(1)
+                                                                    : '...'
+                                                                  }
+                                                                </td>
+                                                              
+                                                            }
                                                           </tr>
                                                   }
                                                 })
                                               }
-                                              {
-                                                this.state.ds[0].user.map((item) => {
-                                                  if (item.isGV === true && item.User_Topic.important === 0) {
-                                                    return <tr>
-                                                            <td>{item.ten}</td>
-                                                            <td>
-                                                              {this.state.ds[0].lan4 === null ?
-                                                              'Chưa cập nhật'
-                                                              : this.state.ds[0].lan4}
-                                                            </td>
-                                                            <td>
-                                                              {this.state.ds[0].lan5 === null ?
-                                                              'Chưa cập nhật'
-                                                              : this.state.ds[0].lan5}
-                                                            </td>
-                                                            <td>
-                                                              {this.state.ds[0].lan6 === null ?
-                                                              'Chưa cập nhật'
-                                                              : this.state.ds[0].lan6}
-                                                            </td>
-                                                            <td>...</td>
-                                                          </tr>
+                                              <tr style={{textAlign: 'center'}}>
+                                                <td style={{border: '1px solid white'}}></td>
+                                                <td style={{border: '1px solid white'}}></td>
+                                                <td style={{border: '1px solid white'}}></td>
+                                                <td style={{borderLeft: '1px solid white', borderBottom: '1px solid white'}}></td>
+                                                <td>
+                                                  {console.log('cc', this.state.sl, this.state.tongHD, this.state.tongPB),
+                                                    (this.state.tongHD !== 0 && this.state.tongPB !== 0)
+                                                    ? ((this.state.tongHD * this.state.tile.gvhdtong / 100) + ((this.state.tongPB / this.state.sl) * this.state.tile.gvpbtong / 100)).toFixed(1)
+                                                    : '...'
                                                   }
-                                                })
-                                              }
+                                                </td>
+                                              </tr>
                                             </tbody>
                                           </table>
-
                                           <h4>
                                             -Link video
                                             <div>

@@ -25,9 +25,6 @@ class QuanLyDoAn extends Component{
           lan1 : '',
           lan2 : '',
           lan3 : '',
-          lan4 : '',
-          lan5 : '',
-          lan6 : '',
           idUser : '',
           tenDA : '',
           idLoai : '',
@@ -35,7 +32,10 @@ class QuanLyDoAn extends Component{
           ng : false,
         }
         const cookie = new Cookies();
-        this.id = cookie.get('id') !== 'admin' ? true : false;
+        const idAll = cookie.get('id');
+        if (idAll !== 'admin' && idAll !== 'adminPM' && idAll !== 'adminM') {
+          this.id = true;
+        } else this.id = false;
         this.ngTao = cookie.get('id');
         this.id1 = cookie.get('id');
     }
@@ -268,25 +268,27 @@ class QuanLyDoAn extends Component{
         })
       }
 
+      onChangeS = (e) => {
+        const { name, value} = e.target;
+        this.setState({
+          lan : value
+        })
+      }
+
       onClickDS = (id, lan) => {
         let diem;
         if(lan === 1)
-            diem = this.state.lan1;
+            diem = this.state.lan;
         if(lan === 2)
-            diem = this.state.lan2;
+            diem = this.state.lan;
         if(lan === 3)
-            diem = this.state.lan3;
-        if(lan === 4)
-            diem = this.state.lan4;
-        if(lan === 5)
-            diem = this.state.lan5;
-        if(lan === 6)
-            diem = this.state.lan6;
+            diem = this.state.lan;
         axios({
           method : 'PUT',
           url : 'http://localhost:4000/topics/diem',
           data : {
-            id : id,
+            idUser : id,
+            idTopic : this.state.info.id,
             lan : lan,
             diem : diem,
           }
@@ -339,7 +341,7 @@ class QuanLyDoAn extends Component{
       }
 
   render() {
-      this.name = this.state.ten === 'admin' ? true : false;
+      this.name = this.state.ten === 'admin' || 'adminPM' || 'adminM'  ? true : false;
       let {danhsach} = this.state;
     return (
 
@@ -369,6 +371,7 @@ class QuanLyDoAn extends Component{
                     <h4>Tên đồ án: {this.state.info.tenDoAn}</h4>
                     <h4>Nền tảng: {this.state.info.nenTang} </h4>
                     <h4>Loại đồ án: {this.state.info.loai} </h4>
+                    <h4>Chuyên ngành: {this.state.info.chuyenNganh} </h4>
                     <h4>Mô tả: {this.state.info.moTa} </h4>
                     <h4>Ngày báo cáo: {this.state.info.ngayNop === 'Invalid date' ? 'Chưa cập nhật' : this.state.info.ngayNop} 
                       <button type="button" className="btn btn-warning f fz" onClick={this.onClickChangeN}>CN</button>
@@ -431,78 +434,43 @@ class QuanLyDoAn extends Component{
                           <th>Lần 1</th>
                           <th>Lần 2</th>
                           <th>Lần 3</th>
-                          <th>Điểm tổng</th>
                         </tr>
                       </thead>
                       <tbody>
                         {
                           this.state.info.user.map((item, index) => {
-                            if (item.isGV === true && item.User_Topic.important === 1) {
+                            if (item.isGV === true) {
                               return <tr>
                                       <td>{item.ten}</td>
                                       <td>
                                         {
                                           <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan1" id="input" className="form-control" onChange={this.onChange} value={this.state.lan1} placeholder={this.state.info.lan1 === null ? '' : this.state.info.lan1} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 1)}>save</button>
+                                            <input type="text" style={{width: '50px'}} name="lan1" id="input" className="form-control" onChange={(e) => this.onChangeS(e)} placeholder={item.User_Topic.lan1 === null ? '' : item.User_Topic.lan1} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(item.id, 1)}>save</button>
                                           </div>
                                         }
                                       </td>
                                       <td>
                                         {
                                           <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan2" id="input" className="form-control" onChange={this.onChange} value={this.state.lan2} placeholder={this.state.info.lan2 === null ? '' : this.state.info.lan2} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 2)}>save</button>
+                                            <input type="text" style={{width: '50px'}} name="lan2" id="input" className="form-control" onChange={(e) => this.onChangeS(e)} placeholder={item.User_Topic.lan2 === null ? '' : item.User_Topic.lan2} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(item.id, 2)}>save</button>
                                           </div>
                                         }
                                       </td>
                                       <td>
                                         {
                                           <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan3" id="input" className="form-control" onChange={this.onChange} value={this.state.lan3} placeholder={this.state.info.lan3 === null ? '' : this.state.info.lan3} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 3)}>save</button>
+                                            <input type="text" style={{width: '50px'}} name="lan3" id="input" className="form-control" onChange={(e) => this.onChangeS(e)} placeholder={item.User_Topic.lan3 === null ? '' : item.User_Topic.lan3} required="required" title="" />
+                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(item.id, 3)}>save</button>
                                           </div>
                                         }
                                       </td>
-                                      <td>...</td>
                                     </tr>
                             }
                           })
                         }
-                        {
-                          this.state.info.user.map((item, index) => {
-                            if (item.isGV === true && item.User_Topic.important === 0) {
-                              return <tr>
-                                      <td>{item.ten}</td>
-                                      <td>
-                                        {
-                                          <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan4" id="input" className="form-control" onChange={this.onChange} value={this.state.lan4} placeholder={this.state.info.lan4 === null ? '' : this.state.info.lan4} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 4)}>save</button>
-                                          </div>
-                                        }
-                                      </td>
-                                      <td>
-                                        {
-                                          <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan5" id="input" className="form-control" onChange={this.onChange} value={this.state.lan5} placeholder={this.state.info.lan5 === null ? '' : this.state.info.lan5} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 5)}>save</button>
-                                          </div>
-                                        }
-                                      </td>
-                                      <td>
-                                        {
-                                          <div style={{display: 'flex', justifyContent: 'center'}}>
-                                            <input type="text" style={{width: '50px'}} name="lan6" id="input" className="form-control" onChange={this.onChange} value={this.state.lan6} placeholder={this.state.info.lan6 === null ? '' : this.state.info.lan6} required="required" title="" />
-                                            <button style={{marginLeft: '2px'}} type="button" className="btn btn-danger" onClick={() => this.onClickDS(this.state.info.id, 6)}>save</button>
-                                          </div>
-                                        }
-                                      </td>
-                                      <td>...</td>
-                                    </tr>
-                            }
-                          })
-                        }
+                      
                       </tbody>
                     </table>
                     <h4>
@@ -543,7 +511,7 @@ class QuanLyDoAn extends Component{
                                 }
                                 <th style={{width: '250px'}}>Giảng viên hướng dẫn</th>
                                 <th >
-                                  <Link style={{display: "flex", justifyContent: "center"}} to={`/Them/${this.state.idLoai}`} type="button" className="btn btn-default btnAdd">Thêm đồ án</Link>
+                                  
                                 </th>
                             </tr>
                         </thead>

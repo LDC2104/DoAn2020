@@ -9,6 +9,7 @@ var usersRouter = require('./routes/users');
 var topic = require('./routes/topics');
 var order = require('./routes/orders');
 var tb = require('./routes/tbs');
+var ratio = require('./routes/ratio');
 
 var app = express();
 const db = require('./models');
@@ -32,6 +33,7 @@ app.use('/users', usersRouter);
 app.use('/topics', topic);
 app.use('/orders', order);
 app.use('/tbs', tb);
+app.use('/ratios', ratio);
 
 
 // catch 404 and forward to error handler

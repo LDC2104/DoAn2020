@@ -13,10 +13,12 @@ class LuaChon extends Component{
     constructor(props){
         super(props);
         this.state = {
-            ten : 'admin',
+            ten : '',
             isSV : false,
+            isGV : false,
             o : false,
-            op : false
+            op : false,
+            ck : '',
           }
     }
 
@@ -26,23 +28,40 @@ class LuaChon extends Component{
         })
     }
 
+    onClickSaveCookie = (cn) => {
+        const cookies = new Cookies();
+        cookies.set('cn', `${cn}`, { path: '/' });
+        this.setState({
+            ck : cn
+        })
+    }
+
     componentDidMount(){
+        const cookie = new Cookies();
+        const cooc = cookie.get('cn');
         axios({
             method : 'GET',
             url : 'http://localhost:4000/users/TT',
             data : null,
             withCredentials: true
         }).then(res => {
-          if (res.data.length != 0) {
+            if (res.data.admin === 1) {
             this.setState({
-                ten : res.data[0].ten,
+                ten : res.data.ten,
+                ck : cooc
             })
-            if (res.data[0].isGV == false) {
+            } else {
+                this.setState({
+                    ten : res.data.result[0].ten,
+                    isGV : res.data.result[0].isGV,
+                    ck : cooc
+                });
+            if (res.data.result[0].isGV == false) {
                 this.setState({
                     isSV : true
                 })
-              }
-          }
+                }
+            }
         })
 
         axios({ 
@@ -135,16 +154,26 @@ class LuaChon extends Component{
                         <div class="accordion ">
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    (((this.state.ten == 'admin') || this.state.isGV === true))
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
-                                            <Link to={'/QLND'}>Quản lý người dùng</Link>
+                                            {this.state.ck === 'Phần mềm' ? <button style={{width: '68%', borderRadius: '14px'}} onClick={() => this.onClickSaveCookie('Phần mềm')} >PM</button> : <button style={{width: '30%', borderRadius: '14px'}} onClick={() => this.onClickSaveCookie('Phần mềm')} >PM</button>}
+                                            {this.state.ck === 'Mạng' ? <button style={{width: '68%', marginLeft: '2%', borderRadius: '14px'}} onClick={() => this.onClickSaveCookie('Mạng')} >M</button> : <button style={{width: '30%', marginLeft: '2%',borderRadius: '14px'}} onClick={() => this.onClickSaveCookie('Mạng')} >M</button>}
                                         </div>
-                                    : ''
+                                    :  ''
                                 }
                             </div>
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    (((this.state.ten == 'admin')) || (this.state.ten == 'adminPM') || (this.state.ten =='adminM'))  
+                                    ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
+                                            <Link to={'/QLND'}>Quản lý người dùng</Link>
+                                        </div>
+                                    :  ''
+                                }
+                            </div>
+                            <div class="accordion-group khungt">
+                                {
+                                    (((this.state.ten == 'admin')) || (this.state.ten == 'adminPM') || (this.state.ten =='adminM'))  
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/TaoThongBao'}>Tạo thông báo</Link>
                                         </div>
@@ -165,9 +194,9 @@ class LuaChon extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    (((this.state.ten == 'admin')) || (this.state.ten == 'adminPM') || (this.state.ten =='adminM'))
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
-                                            <Link to={'/CapNhat'}>Cập nhật ngày và phòng</Link>
+                                            <Link to={'/CapNhat'}>Tùy chọn đồ án</Link>
                                         </div>
                                     :   <div>
                                         { this.state.isSV 
@@ -175,7 +204,9 @@ class LuaChon extends Component{
                                             <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                                 <Link to={'/GVHD'}>Giảng viên hướng dẫn</Link>
                                             </div>
-                                            : ''
+                                            : <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
+                                                <Link to={'/Them'}>Thêm đồ án</Link>
+                                            </div>
                                             }
                                         </div>
                                 }

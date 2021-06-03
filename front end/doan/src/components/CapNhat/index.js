@@ -13,12 +13,16 @@ class CapNhat extends Component{
     constructor(props){
         super(props);
         this.state = {
-            ten : 'admin',
+            ten : '',
             isSV : false,
             o : false,
             op : false,
             phong : '',
             loai : 'Đồ án cơ sở',
+            tl : false,
+            gvhd : [],
+            gvpb : [],
+            tile : '',
           }
     }
 
@@ -50,6 +54,58 @@ class CapNhat extends Component{
         })
     }
 
+    onClickTiLe = () => {
+        this.setState({
+            tl : !this.state.tl
+        })
+    }
+
+    onChangeS = (e, index) => {
+        const { name, value} = e.target;
+        const listSV = this.state.gvhd;
+        listSV[index] = {...listSV[index], [name]: value}
+        this.setState({gvhd: listSV})
+    }
+
+    onChangeSS = (e, index) => {
+        const { name, value} = e.target;
+        const listSV = this.state.gvpb;
+        listSV[index] = {...listSV[index], [name]: value}
+        this.setState({gvpb: listSV})   
+    }
+
+    onClickSaveT = (e) => {
+        axios({ 
+            method : 'POST',
+            url : 'http://localhost:4000/ratios/tile/set',
+            data : {
+              chuyenNganh : this.state.ten === 'adminPM' ? 'PM' : 'M',
+              gvhd : this.state.gvhd,
+              gvpb : this.state.gvpb
+            },
+            withCredentials: true
+          }).then(res => {
+            if (res.data) alert('Thành công ...')
+            window.location.reload();
+        })
+    }
+
+    onClickD = (e) => {
+        axios({ 
+            method : 'delete',
+            url : 'http://localhost:4000/ratios/tile/delete',
+            data : {
+              chuyenNganh : this.state.ten === 'adminPM' ? 'PM' : 'M',
+            },
+            withCredentials: true
+          }).then(res => {
+            if (res.data) {
+                alert('Thành công ...');
+                window.location.reload();
+            }
+        })
+    }
+
     onClickAllSaveP = () => {
     this.setState({
         p : !this.state.p
@@ -73,16 +129,32 @@ class CapNhat extends Component{
             data : null,
             withCredentials: true
         }).then(res => {
-          if (res.data.length != 0) {
+            if (res.data.admin === 1) {
             this.setState({
-                ten : res.data[0].ten,
+                ten : res.data.ten,
+            });
+            axios({
+                method : 'POST',
+                url : 'http://localhost:4000/ratios/tile/diem',
+                data : {
+                    chuyenNganh : this.state.ten === 'adminPM' ? 'PM' : 'M',
+                },
+                withCredentials: true
+            }).then(res => {console.log('tile', res.data);
+                this.setState({
+                    tile : res.data
+                })
             })
-            if (res.data[0].isGV == false) {
+            } else {
+                this.setState({
+                    ten : res.data.result[0].ten,
+                });
+            if (res.data.result[0].isGV == false) {
                 this.setState({
                     isSV : true
                 })
-              }
-          }
+                }
+            }
         })
 
         axios({ 
@@ -153,6 +225,8 @@ class CapNhat extends Component{
               })
             }
         })
+
+        
     }
 
 
@@ -169,13 +243,78 @@ class CapNhat extends Component{
                 : ''
             }
 
+            {this.state.tl
+                ? 
+                <div class="modal-dialog modal-dialog-centered  modal display-block">
+                    
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title">Tỉ lệ điểm số</h3>
+                        </div>
+                        <div class="modal-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                <th></th>
+                                <th>Lần 1 (%)</th>
+                                <th>Lần 2 (%)</th>
+                                <th>Lần 3 (%)</th>
+                                <th>Điểm tổng (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Giảng viên hướng dẫn</td>
+                                <td>
+                                 <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan1" value={this.state.tile.gvhd1} id="input" class="form-control" onChange={(e) => this.onChangeS(e, 0)} />
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan2" value={this.state.tile.gvhd2} id="input" class="form-control" onChange={(e) => this.onChangeS(e, 1)}/>
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan3" value={this.state.tile.gvhd3} id="input" class="form-control" onChange={(e) => this.onChangeS(e, 2)} />
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="tong" value={this.state.tile.gvhdtong} id="input" class="form-control" onChange={(e) => this.onChangeS(e, 3)}/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Giảng viên phản biện</td>
+                                <td>
+                                 <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan1" value={this.state.tile.gvpb1} id="input" class="form-control" onChange={(e) => this.onChangeSS(e, 0)}/>
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan2" value={this.state.tile.gvpb2} id="input" class="form-control" onChange={(e) => this.onChangeSS(e, 1)} />
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="lan3" value={this.state.tile.gvpb3} id="input" class="form-control" onChange={(e) => this.onChangeSS(e, 2)} />
+                                </td>
+                                <td>
+                                    <input style={{width: '50px', margin: 'auto auto', textAlign: 'center'}} type="text" name="tong" value={this.state.tile.gvpbtong} id="input" class="form-control" onChange={(e) => this.onChangeSS(e, 3)}/>
+                                </td>
+                            </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer" >
+                        <button type="button" class="btn btn-default"onClick={this.onClickD}>Delete</button>
+                        <button type="button" class="btn btn-default"onClick={this.onClickSaveT}>Save</button>
+                        <button type="button" class="btn btn-default"onClick={this.onClickTiLe}>Close</button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                : ''
+            }
+
             <div class="container-fluid padding">
                 <div class="row padding">
                     <div class="col-md-3 col-sx-3 col-sm-3 col-lg-3">
                         <div class="accordion ">
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    this.state.ten == 'admin' || 'adminPM' || 'adminM' 
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/QLND'}>Quản lý người dùng</Link>
                                         </div>
@@ -184,7 +323,7 @@ class CapNhat extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    this.state.ten == 'admin' || 'adminPM' || 'adminM' 
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/LuaChon'}>Loại đồ án</Link>
                                         </div>
@@ -193,7 +332,7 @@ class CapNhat extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    this.state.ten == 'admin' || 'adminPM' || 'adminM' 
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/TaoThongBao'}>Tạo thông báo</Link>
                                         </div>
@@ -269,7 +408,21 @@ class CapNhat extends Component{
                                         <button type="button" className="btn btn-info centers" onClick={this.onClickAllSaveP}>Save</button>
                                       </div>
                                 </div>
+                                
+                                {
+                                    this.state.ten === 'admin' ?
+                                    <div style={{display: 'flex', width: '100%'}}>
+                                        <Link style={{width: '100%', margin: '5px 0px'}} to={'/Them'} type="button" className="btn btn-info centers">Thêm đồ án</Link>
+                                    </div>
+                    
+                                    :
 
+                                    <div style={{display: 'flex', width: '100%'}}>
+                                        <Link style={{width: '48%', margin: '5px 0px'}} to={'/Them'} type="button" className="btn btn-info centers">Thêm đồ án</Link>
+                                        <button style={{width: '48%', margin: '5px 0px', marginLeft: '4%', fontSize: '18px'}} type="button" className="btn btn-info centers" onClick={this.onClickTiLe}>Tỉ lệ điểm</button>
+                                    </div>
+                                }
+                                
                             </div>
                         </div>
                     </div>

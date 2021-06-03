@@ -14,7 +14,22 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
           allowNull: true
           // allowNull defaults to true
-      },
+        },
+        lan1: {
+          type: DataTypes.INTEGER,
+          allowNull: true
+          // allowNull defaults to true
+        },
+        lan2: {
+          type: DataTypes.INTEGER,
+          allowNull: true
+          // allowNull defaults to true
+        },
+        lan3: {
+          type: DataTypes.INTEGER,
+          allowNull: true
+          // allowNull defaults to true
+        }
 
       }, {
         tableName: 'users_topics',

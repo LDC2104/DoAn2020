@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 
 
@@ -10,9 +11,17 @@ class ThemDoAn extends Component{
             tenDoAn : '',
             nenTang : '',
             loai : 'Đồ án cơ sở',
+            chuyenNganh : 'Phần mềm',
             moTa : '',
-            ngDK : '',
+            ngDK : 0,
+            setSV : false,
+            SV : [],
+            ten : '',
+            email : '',
         }
+        const cookie = new Cookies();
+        this.idAll = cookie.get('id');
+        this.sv = [];
     }
 
     onChange = (e) => {
@@ -22,6 +31,27 @@ class ThemDoAn extends Component{
         this.setState({
             [name] : value
         })
+    } 
+
+    onChangeS = (e, index) => {
+        const { name, value} = e.target;
+        const listSV = this.state.SV;
+        listSV[index] = {...listSV[index], [name]: value}
+        this.setState({SV: listSV})
+        
+    }
+
+    onClick = () => {
+        this.setState({
+            setSV : !this.state.setSV
+        })
+    }
+
+    onSave = () => {
+        this.setState({
+            SV : this.sv
+        })
+        alert('Đã lưu...');
     }
     
     onSubmit = (e) => {
@@ -31,26 +61,71 @@ class ThemDoAn extends Component{
         e.preventDefault();
         axios({
             method : 'POST',
-            url : `http://localhost:4000/topics/Them/${id}`,
+            url : 'http://localhost:4000/topics/Them/DoAn',
             data : {
                 tenDoAn : this.state.tenDoAn,
                 nenTang : this.state.nenTang,
                 loai : this.state.loai,
+                chuyenNganh : this.state.chuyenNganh,
                 moTa : this.state.moTa,
                 ngDK : this.state.ngDK,
+                SV : this.state.SV,
             },
             withCredentials: true
         }).then(res => {
             if(res.data){
                 alert('Thêm đồ án thàng công');
-                history.push(`/QuanLyDoAn/${id}`);
+                history.push('/LuaChon');
             }
             else alert('Có lỗi xảy ra, xin thử lại');
         })
     }
+
+
   render() {
+    const listSVElm= [];
+    for(let i = 0 ;i< this.state.ngDK; i ++) {
+
+        let Elm =  <div>
+                    <div className="data">
+                    <label>Tên</label>
+                    <input type="text" placeholder="Nhập tên" name="ten"  required onChange={(e) => this.onChangeS(e,i)}/>
+                    </div>
+                    <div className="data">
+                        <label>Email</label>
+                        <input type="text" placeholder="Nhập Email" name="email" required onChange={(e) => this.onChangeS(e,i)}/>
+                    </div>
+                </div>;
+        listSVElm.push(Elm)
+    }
     return (
         <div>
+        {this.state.setSV 
+                ? 
+                <div class="modal-dialog modal-dialog-centered  modal display-block">
+                    
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title">Sinh viên đăng ký</h3>
+                        </div>
+                        <div class="modal-body">
+                        <form onSubmit={this.onSubmit}>
+                            <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                            {
+                                listSVElm
+                            }
+                            </div>                            
+                        </form>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-default"onClick={this.onClick}>Close</button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                : ''
+            }
         <div className="center">    
         <div className="container"> 
             <div className="text">Thêm Đề Tài</div>
@@ -73,12 +148,37 @@ class ThemDoAn extends Component{
                     </select>
                 </div>
                 <div className="data">
+                    <label>Chuyên ngành</label>
+                    {
+                        this.idAll === 'admin' ?
+                        <select className="form-control" name="chuyenNganh" onChange={this.onChange} value={this.state.chuyenNganh}>
+                            <option value="Phần mềm">Phần mềm</option>
+                            <option value="Mạng">Mạng</option>
+                        </select>
+                        : this.idAll === 'adminPM' ?
+                        <select className="form-control" name="chuyenNganh" value={this.state.chuyenNganh}>
+                            <option value="Phần mềm" selected={this.state.chuyenNganh = 'Phần mềm'}>Phần mềm</option>
+                        </select>
+                        : <select className="form-control" name="chuyenNganh" value={this.state.chuyenNganh}>
+                            <option value="Mạng" selected={this.state.chuyenNganh = 'Mạng'} >Mạng</option>
+                        </select>
+                    }
+                    
+                </div>
+                <div className="data">
                     <label>Mô tả</label>
                     <textarea type="text" placeholder="Mô tả" name="moTa" value={this.state.moTa} onChange={this.onChange}/>
                 </div>
                 <div className="data">
                     <label>Số lượng</label>
+                    <div style={{display: 'flex'}}>
                     <input type="number" min='1' max='3' className="form-control" name="ngDK" value={this.state.ngDK} onChange={this.onChange}/>
+                    {
+                        this.state.ngDK !== 0 && this.state.ngDK <= 3
+                        ? <button style={{height: '35px'}} type="button" onClick={this.onClick} >*</button>
+                        : ''
+                    }
+                    </div>
                 </div>
                 <div className="btn">
                     <div className="inner" />

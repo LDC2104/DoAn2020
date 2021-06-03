@@ -133,7 +133,7 @@ input password{
   background-color: #78fa3c;
 }
 .btnAdd{
-  background-color: #3447b3;
+  background-color: lightgray;
   color: white;
 }
 .btn1:hover{

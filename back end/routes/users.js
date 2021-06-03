@@ -9,6 +9,7 @@ require('dotenv').config();
 //Đăng ký
 router.post('/dk', async (req, res, next) => {
   let {email, password, ten, isGV, isAdmin, ma, maGV} = req.body;
+  if ((ten !== 'admin') && (ten !== 'adminPM') && (ten !== 'adminM')) {
   try {
     const code = await db.Code.findOne({where : {email : email}});
     if(ma === code.code){
@@ -42,23 +43,25 @@ router.post('/dk', async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-  }
+  }}
 });
 
 //Đăng ký admin
 router.post('/dkAdmin', async (req, res, next) => {
   let {email, ten, isGV} = req.body;
-  try {
-    const kt = await db.User.findOne({where : {email : email}});
-      if(kt !== null) {
-        res.send('da ton tai');
-      }
-      else {
-        const result = await db.User.create({email, password : '123', ten, isGV, isAdmin: 0});
-        res.send(result);
-      }
-  } catch (error) {
-    console.log(error);
+  if ((ten !== 'admin') && (ten !== 'adminPM') && (ten !== 'adminM')) {
+    try {
+      const kt = await db.User.findOne({where : {email : email}});
+        if(kt !== null) {
+          res.send('da ton tai');
+        }
+        else {
+          const result = await db.User.create({email, password : '123', ten, isGV, isAdmin: 0});
+          res.send(result);
+        }
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
@@ -75,23 +78,29 @@ router.post('/', async (req, res, next) => {
       const result = await kt.validPassword(password);
       if(result === true){
         if(kt.isAdmin === true){
-          res.send({admin : 1, message: '/LuaChon'});
+          res.send({admin : 'admin', message: '/LuaChon'});
         }
-        else {
-          const kt3 = await db.User.findOne({where : {id : kt.id, isGV : true}})
-          if(kt3){
-            res.send({kt: kt.id, isGV : 1, message: '/LuaChon'});
+          if (kt.isAdminPM === true) {
+            res.send({admin : 'adminPM', message : '/LuaChon'})
           }
-          else{
-            const kt2 = await db.User_Topic.findOne({where : {UserId : kt.id}});
-            if(kt2) {
-              res.send({kt: kt.id, message: '/ThongTin'});
+            if (kt.isAdminM === true) {
+              res.send({admin : 'adminM', message : '/LuaChon'});
             }
             else {
-              res.send({kt: kt.id, message: '/LuaChon'});
+              const kt3 = await db.User.findOne({where : {id : kt.id, isGV : true}})
+              if(kt3){
+                res.send({kt: kt.id, isGV : 1, message: '/LuaChon'});
+              }
+              else{
+                const kt2 = await db.User_Topic.findOne({where : {UserId : kt.id}});
+                if(kt2) {
+                  res.send({kt: kt.id, message: '/ThongTin'});
+                }
+                else {
+                  res.send({kt: kt.id, message: '/ChuyenNganh'});
+                }
+              }
             }
-          }
-        }
       }
       else {
         res.send('1')
@@ -119,8 +128,10 @@ router.get('/TT', async (req, res, next) => {
         }
       }
     });
-    if(result !== null){
-      res.send(result);
+    if(result.length !== 0){
+      res.send({admin: 0, result});
+    } else{
+      res.send({admin: 1, ten: idUser})
     }
   } catch (error) {
     console.log(error);

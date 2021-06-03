@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false
           // allowNull defaults to true
         },
+        chuyenNganh: {
+          type: DataTypes.STRING,
+          allowNull: false
+          // allowNull defaults to true
+        },
         moTa: {
           type: DataTypes.STRING,
           allowNull: false
@@ -38,42 +43,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         ngTao: {
           type: DataTypes.INTEGER,
-          allowNull: true
-        },
-        lan1: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan2: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan3: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan4: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan5: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan6: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan7: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan8: {
-          type: DataTypes.FLOAT,
-          allowNull: true
-        },
-        lan9: {
-          type: DataTypes.FLOAT,
           allowNull: true
         },
         link: {

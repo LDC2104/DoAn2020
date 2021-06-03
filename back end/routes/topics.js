@@ -5,6 +5,7 @@ const db = require('../models');
 //Hiển thị cho admin
 router.get('/:id', async (req, res, next) => {
   let idUser = req.cookies.id;
+  let chuyenNganh = req.cookies.cn;console.log('AAA',chuyenNganh);
   let {id} = req.params;
   if (id == 'DACS') {
     id = 'Đồ án cơ sở'
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res, next) => {
   try {
     if(idUser === 'admin'){
       const result0 = await db.Topic.findAll({
-        where : {loai : id},
+        where : {loai : id, chuyenNganh : chuyenNganh},
         include : {
           model: db.User,
           as: 'user',
@@ -30,23 +31,43 @@ router.get('/:id', async (req, res, next) => {
       });
       res.send({data: result0, message: 'admin'});
     }
-    else {
-      const result = await db.User.findOne({
-        where : {id : idUser, isGV : true},
-        include : {
-          model: db.Topic,
-          where : {loai : id},
-          as: 'topic',
+      if (idUser === 'adminPM') {
+        const result0 = await db.Topic.findAll({
+          where : {loai : id, chuyenNganh: 'Phần mềm'},
           include : {
             model: db.User,
-            as: 'user'
+            as: 'user',
+          }
+        });
+        res.send({data: result0, message: 'adminPM'});
+      }
+        if (idUser === 'adminM') {
+          const result0 = await db.Topic.findAll({
+            where : {loai : id, chuyenNganh: 'Mạng'},
+            include : {
+              model: db.User,
+              as: 'user',
+            }
+          });
+          res.send({data: result0, message: 'adminM'});
+        } 
+        else {
+          const result = await db.User.findOne({
+            where : {id : idUser, isGV : true},
+            include : {
+              model: db.Topic,
+              where : {loai : id, chuyenNganh : chuyenNganh},
+              as: 'topic',
+              include : {
+                model: db.User,
+                as: 'user'
+              }
+            }
+          })
+          if(result){
+            res.send({data: result, message: result.ten});
           }
         }
-      })
-      if(result){
-        res.send({data: result, message: result.ten});
-      }
-    }
   } catch (error) {
     console.log(error)
   }
@@ -55,6 +76,7 @@ router.get('/:id', async (req, res, next) => {
 //Hiển thị ?
 router.post('/:id', async (req, res, next) => {
   let idUser = req.cookies.id;
+  let chuyenNganh = req.cookies.cn;console.log('AAA',chuyenNganh);
   let {id} = req.params;
   if (id == 'DACS') {
     id = 'Đồ án cơ sở'
@@ -71,7 +93,7 @@ router.post('/:id', async (req, res, next) => {
   }
   try {
     const result = await db.Topic.findAll({
-      where : {loai : id},
+      where : {loai : id, chuyenNganh : chuyenNganh},
       include : {
         model: db.User,
         as: 'user',
@@ -112,21 +134,39 @@ router.post('/:id', async (req, res, next) => {
 
 
 //Thêm
-router.post('/Them/:id', async (req, res, next) => {
-  let {tenDoAn, nenTang, loai, moTa, ngayNop, ngDK} = req.body;
+router.post('/Them/DoAn', async (req, res, next) => {
+  let {tenDoAn, nenTang, loai, chuyenNganh, moTa, ngayNop, ngDK, SV} = req.body;
   let ngTao = req.cookies.id;
+  let result;
   try {
-    if(ngTao !== 'admin'){
-      const result = await db.Topic.create({tenDoAn, nenTang, loai, moTa, ngayNop, ngDK, ngTao});
+    if((ngTao !== 'admin') && (ngTao !== 'adminPM') && (ngTao !== 'adminM')){
+      result = await db.Topic.create({tenDoAn, nenTang, loai, chuyenNganh, moTa, ngayNop, ngDK, ngTao});
       const result1 = await db.User_Topic.create({userId: ngTao, topicId: result.id, important: 1});
       res.send(result);
     }
     else {
-      const result = await db.Topic.create({tenDoAn, nenTang, loai, moTa, ngayNop, ngDK});
+      result = await db.Topic.create({tenDoAn, nenTang, loai, chuyenNganh, moTa, ngayNop, ngDK});
       res.send(result);
     }
   } catch (error) {
     console.log(error);
+  }
+
+  if (SV.length !== 0) {
+    for (let index = 0; index < SV.length; index++) {
+      try {
+        const kt = await db.User.findOne({where : {email : SV[index].email}});
+          if(kt !== null) {
+            const result1 = await db.User_Topic.create({userId: kt.id, topicId: result.id});
+          }
+          else {
+            const newSV = await db.User.create({email : SV[index].email, password : '123', ten : SV[index].ten, isGV: 0, isAdmin: 0});    
+            const result2 = await db.User_Topic.create({userId: newSV.id, topicId: result.id});
+          }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 });
 
@@ -157,9 +197,9 @@ router.get('/:id/edit', async (req, res, next) => {
  //Sửa 
  router.put('/:id/edit', async (req, res, next) => {
   let {id} = req.params;
-  let {tenDoAn, nenTang, moTa, ngayNop, ngDK} = req.body;
+  let {tenDoAn, nenTang, loai, chuyenNganh, moTa, ngayNop, ngDK} = req.body;
   try {
-    const result = await db.Topic.update({tenDoAn, nenTang, moTa, ngayNop, ngDK},{where: {id}});
+    const result = await db.Topic.update({tenDoAn, nenTang, loai, chuyenNganh, moTa, ngayNop, ngDK},{where: {id}});
     res.send('s');
   } catch (error) {
     console.log(error);
@@ -168,32 +208,21 @@ router.get('/:id/edit', async (req, res, next) => {
 
 //Sửa điểm 
 router.put('/diem', async (req, res, next) => {
-  let {id, lan, diem} = req.body;
+  let {idUser, idTopic,  lan, diem} = req.body;
   try {
     if(lan == 1){
-      const result = await db.Topic.update({lan1:diem},{where: {id}});
+      const result = await db.User_Topic.update({lan1:diem},{where: {userId: idUser, topicId: idTopic}});
       res.send('s');
     }
     if(lan == 2){
-      const result = await db.Topic.update({lan2:diem},{where: {id}});
+      const result = await db.User_Topic.update({lan2:diem},{where: {userId: idUser, topicId: idTopic}});
       res.send('s');
     }
     if(lan == 3){
-      const result = await db.Topic.update({lan3:diem},{where: {id}});
+      const result = await db.User_Topic.update({lan3:diem},{where: {userId: idUser, topicId: idTopic}});
       res.send('s');
     }
-    if(lan == 4){
-      const result = await db.Topic.update({lan4:diem},{where: {id}});
-      res.send('s');
-    }
-    if(lan == 5){
-      const result = await db.Topic.update({lan5:diem},{where: {id}});
-      res.send('s');
-    }
-    if(lan == 6){
-      const result = await db.Topic.update({lan6:diem},{where: {id}});
-      res.send('s');
-    }
+
   } catch (error) {
     console.log(error);
   }
@@ -298,6 +327,7 @@ router.delete('/:id/:id', async (req, res, next) => {
     console.log(error);
   }
 });
+
 
 
 

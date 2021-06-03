@@ -8,7 +8,10 @@ class DanhSachDoAnAdmin extends Component{
   constructor(props){
     super(props);
     const cookie = new Cookies();
-    this.id = cookie.get('id') !== 'admin' ? true : false;
+    const idAll = cookie.get('id');
+      if (idAll !== 'admin' && idAll !== 'adminPM' && idAll !== 'adminM') {
+        this.id = true;
+      } else this.id = false;
     this.id1 = cookie.get('id');
     this.state = {
     }
@@ -102,21 +105,21 @@ class DanhSachDoAnAdmin extends Component{
     var {ds, index, idLoai} = this.props;
     return (
       <tr>
-            <td onClick={() => this.onClick2(ds.id)}>{index + 1}</td>
-            <td onClick={() => this.onClick2(ds.id)}>{ds.tenDoAn}</td>
-            <td onClick={() => this.onClick2(ds.id)}>{ds.nenTang}</td>
-            <td onClick={() => this.onClick2(ds.id)}>{ds.loai}</td>
-            <td onClick={() => this.onClick2(ds.id)}>{ds.moTa}</td>
-            <td onClick={() => this.onClick2(ds.id)}>{ds.ngDK}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{index + 1}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{ds.tenDoAn}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{ds.nenTang}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{ds.loai}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{ds.moTa}</td>
+            <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>{ds.ngDK}</td>
             {
               this.id ? '' :
-              <td onClick={() => this.onClick2(ds.id)}>
+              <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>
                 {ds.ngayNop}
               </td>
             }
             {
               this.id ? '' :
-              <td onClick={() => this.onClick2(ds.id)}>
+              <td onClick={() => this.onClick2(ds.id)} style={{textAlign: 'center'}}>
                 {ds.phong}
               </td>
             }
@@ -126,7 +129,7 @@ class DanhSachDoAnAdmin extends Component{
                     }
                 })}
             </td>
-            <td style={{textAlign:'center'}} onClick={() => this.onClick2(ds.id)}>
+            <td style={{textAlign:'center', width: '150px'}}>
             <Link  to={`/${idLoai}/${ds.id}/edit`}type="button" className="btn btn-success" >Sửa</Link>
             <button style={{width:'52px',height: '40px'}} type="button" className="btn btn-danger ml-10" onClick={() => this.onDelete(ds.id, ds.ngTao)}>Xóa</button>
             </td>

@@ -38,9 +38,9 @@ class DangNhap extends Component{
             else if(res.data === 1)
                     alert('Email hoặc mật khẩu chưa chính xác');
                  else {
-                     if(res.data.admin === 1){
+                     if(res.data.admin){
                         const cookies = new Cookies();
-                        cookies.set('id', 'admin', { path: '/' });
+                        cookies.set('id', `${res.data.admin}`, { path: '/' });
                         history.push(res.data.message);
                      }else {
                         const cookies = new Cookies();

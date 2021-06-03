@@ -16,6 +16,7 @@ import QLND from './components/QLND';
 import CapNhat from './components/CapNhat';
 import GVHD from './components/GVHD';
 import ThemAdmin from './components/ThemAdmin';
+import ChuyenNganh from './components/ChuyenNganh';
 
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
         path : '/LuaChon',
         exact : false,
         main : ({history}) => <LuaChon history={history}/>
+    },
+    {
+        path : '/ChuyenNganh',
+        exact : false,
+        main : ({history}) => <ChuyenNganh history={history}/>
     },
     {
         path : '/TaoThongBao',
@@ -76,7 +82,7 @@ const routes = [
         main : ({match,history}) => <QuanLyDoAn match={match} history={history}/>
     },
     {
-        path : '/Them/:id',
+        path : '/Them',
         exact : false,
         main : ({match, history}) => <Them match={match} history={history}/>
     },

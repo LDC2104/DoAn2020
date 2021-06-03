@@ -14,7 +14,7 @@ class QLND extends Component{
     constructor(props){
         super(props);
         this.state = {
-            ten : 'admin',
+            ten : '',
             isSV : false,
             o : false,
             op : false,
@@ -64,17 +64,21 @@ class QLND extends Component{
             url : 'http://localhost:4000/users/TT',
             data : null,
             withCredentials: true
-        }).then(res => {
-          if (res.data.length != 0) {
+        }).then(res => {console.log('data', res);
+            if (res.data.admin === 1) {
             this.setState({
-                ten : res.data[0].ten,
+                ten : res.data.ten,
             })
-            if (res.data[0].isGV == false) {
+            } else {
+                this.setState({
+                    ten : res.data.result[0].ten,
+                });
+            if (res.data.result[0].isGV == false) {
                 this.setState({
                     isSV : true
                 })
-              }
-          }
+                }
+            }
         })
 
         axios({
@@ -148,7 +152,7 @@ class QLND extends Component{
                         <div class="accordion ">
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    this.state.ten == 'admin' || 'adminPM' || 'adminM' 
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/LuaChon'}>Loại đồ án</Link>
                                         </div>
@@ -157,7 +161,7 @@ class QLND extends Component{
                             </div>
                             <div class="accordion-group khungt">
                                 {
-                                    this.state.ten == 'admin' 
+                                    this.state.ten == 'admin' || 'adminPM' || 'adminM' 
                                     ?   <div class="accordion-heading stylecolor" style={{padding: '5px'}}>
                                             <Link to={'/TaoThongBao'}>Tạo thông báo</Link>
                                         </div>

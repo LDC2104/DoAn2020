@@ -5,7 +5,7 @@ const db = require('../models');
 //Mời
 router.post('/', async (req, res, next) => {
     let {idMoi, idNhan, idTopic, ip} = req.body;
-    if(idMoi === 'admin')
+    if((idMoi === 'admin') || (idMoi === 'adminPM') || (idMoi === 'adminM'))
       idMoi = null;
     try {
       const result = await db.Order.create({idMoi, idNhan, idTopic, ip});
@@ -20,8 +20,9 @@ router.post('/', async (req, res, next) => {
 //Kiểm tra
 router.post('/kt', async (req, res, next) => {
   let {idMoi, idNhan, idTopic} = req.body;
-  if(idMoi === 'admin')
-      idMoi = null;
+  if((idMoi === 'admin') || (idMoi === 'adminPM') || (idMoi === 'adminM')) {
+    idMoi = null;
+  }
   try {
     const result = await db.User_Topic.findOne({where: {userId: idNhan, topicId: idTopic}});
     if(result === null){
@@ -62,7 +63,7 @@ router.get('/', async (req, res, next) => {
 //Thông báo 1
 router.get('/tb', async (req, res, next) => {
   let idMoi= req.cookies.id;
-  if(idMoi === 'admin') idMoi = null;
+  if((idMoi === 'admin') || (idMoi === 'adminPM') || (idMoi === 'adminM')) idMoi = null;
   try {
     const result = await db.Order.findAll({
       where : {idMoi},

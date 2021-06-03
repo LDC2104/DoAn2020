@@ -25,6 +25,16 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
           defaultValue: false,
         }, 
+        isAdminPM: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        isAdminM: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       }, 
       {
         tableName: 'users',
@@ -36,8 +46,8 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       {
-        charset: 'utf8mb4',
-        collate: 'utf8mb4_unicode_ci'
+        charset: 'utf8',
+        collate: 'utf8_general_ci'
       },
     );
 

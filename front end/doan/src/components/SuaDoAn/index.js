@@ -10,8 +10,9 @@ class SuaDoAn extends Component{
         this.state = {
             tenDoAn : '',
             nenTang : '',
+            loai : '',
+            chuyenNganh : '',
             moTa : '',
-            ngayNop : '',
             ngDK : '',
         }
     }
@@ -27,6 +28,8 @@ class SuaDoAn extends Component{
             this.setState({
                 tenDoAn : res.data.tenDoAn,
                 nenTang : res.data.nenTang,
+                loai : res.data.loai,
+                chuyenNganh : res.data.chuyenNganh,
                 moTa : res.data.moTa,
                 //ngayNop : moment(res.data.ngayNop, "DD-MM-YYYY").format("YYYY-MM-DD"),
                 ngDK : res.data.ngDK,
@@ -55,6 +58,8 @@ class SuaDoAn extends Component{
             data : {
                 tenDoAn : this.state.tenDoAn,
                 nenTang : this.state.nenTang,
+                loai : this.state.loai,
+                chuyenNganh : this.state.chuyenNganh,
                 moTa : this.state.moTa,
                 ngDK : this.state.ngDK,
             }
@@ -80,6 +85,22 @@ class SuaDoAn extends Component{
                     <div className="data">
                         <label>Nền tảng</label>
                         <input type="text" placeholder="Nhập nền tảng" name="nenTang" value={this.state.nenTang} required onChange={this.onChange}/>
+                    </div>
+                    <div className="data">
+                    <label>Loại đồ án</label>
+                        <select className="form-control" name="loai" onChange={this.onChange} value={this.state.loai}>
+                            <option value="Đồ án cơ sở">Đồ án cơ sở</option>
+                            <option value="Đồ án chuyên ngành">Đồ án chuyên ngành</option>
+                            <option value="Đồ án tốt nghiệp">Đồ án tốt nghiệp</option>
+                            <option value="Khóa luận">Khóa luận</option>
+                        </select>
+                    </div>
+                    <div className="data">
+                        <label>Chuyên ngành</label>
+                        <select className="form-control" name="chuyenNganh" onChange={this.onChange} value={this.state.chuyenNganh}>
+                            <option value="Phần mềm">Phần mềm</option>
+                            <option value="Mạng">Mạng</option>
+                        </select>
                     </div>
                     <div className="data">
                         <label>Mô tả</label>
