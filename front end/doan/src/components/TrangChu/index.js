@@ -113,11 +113,11 @@ class TrangChu extends Component{
                                     </div>                                    
                                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                                         {
-                                            moment(item.updatedAt).format("DD-M-YYYY") == this.state.date
+                                            moment(item.updatedAt).format("D-M-YYYY") == this.state.date
                                             ? <img style={{width: '15%',marginTop: '3%'}}  src={New} />
                                             : ''
                                         }
-                                        <h6 style={{marginTop: '3%'}}>{moment(item.updatedAt).format("DD-MM-YYYY")}</h6>
+                                        <h6 style={{marginTop: '3%'}}>{moment(item.updatedAt).format("D-M-YYYY")}</h6>
                                     </div>
                                 </tr>
                             })}        
