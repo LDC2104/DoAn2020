@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import routes from './routes';
-import { Switch, Route, BrowserRouter as Router} from 'react-router-dom';
+import { Switch, Route, HashRouter as Router} from 'react-router-dom';
 import Icon from './images/icon.png';
 
 

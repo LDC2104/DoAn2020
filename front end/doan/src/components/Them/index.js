@@ -61,7 +61,7 @@ class ThemDoAn extends Component{
         e.preventDefault();
         axios({
             method : 'POST',
-            url : 'http://localhost:4000/topics/Them/DoAn',
+            url : 'http://localhost:4000/Them/DoAn',
             data : {
                 tenDoAn : this.state.tenDoAn,
                 nenTang : this.state.nenTang,

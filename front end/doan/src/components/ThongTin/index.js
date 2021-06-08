@@ -45,7 +45,7 @@ class ThongTin extends Component{
         method : 'POST',
         url : 'http://localhost:4000/ratios/tile/diem',
         data : {
-            chuyenNganh : this.state.ten === 'adminPM' ? 'PM' : 'M',
+            chuyenNganh : this.state.ds[0].chuyenNganh === 'Phần mềm' ? 'PM' : 'M',
         },
         withCredentials: true
       }).then(res => {
@@ -87,7 +87,7 @@ class ThongTin extends Component{
   upLink = (id, e) => {
     axios({
       method : 'put',
-      url : 'http://localhost:4000/topics//link',
+      url : 'http://localhost:4000/topics/link',
       data : {
         id : id,
         link : this.state.link
@@ -231,7 +231,7 @@ class ThongTin extends Component{
                                                 <td style={{border: '1px solid white'}}></td>
                                                 <td style={{borderLeft: '1px solid white', borderBottom: '1px solid white'}}></td>
                                                 <td>
-                                                  {console.log('cc', this.state.sl, this.state.tongHD, this.state.tongPB),
+                                                  {
                                                     (this.state.tongHD !== 0 && this.state.tongPB !== 0)
                                                     ? ((this.state.tongHD * this.state.tile.gvhdtong / 100) + ((this.state.tongPB / this.state.sl) * this.state.tile.gvpbtong / 100)).toFixed(1)
                                                     : '...'
